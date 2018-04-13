@@ -6,6 +6,7 @@ import QtQuick.Controls.Material 2.0
 ListView {
  id: jobList
  model: JobModel
+ verticalLayoutDirection: ListView.BottomToTop
  delegate: ItemDelegate {
   anchors.left: parent.left
   anchors.right: parent.right
@@ -34,5 +35,7 @@ ListView {
    stack.push("qrc:///qml/jobViewPage.qml")
   }
  }
-
+ Component.onCompleted: {
+  jobList.positionViewAtEnd()
+ }
 }
