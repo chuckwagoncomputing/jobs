@@ -172,6 +172,9 @@ func (jm *JobModel) addJob(j *Job) {
  jm.BeginInsertRows(core.NewQModelIndex(), len(jm.Jobs()), len(jm.Jobs()))
  jm.SetJobs(append(jm.Jobs(), j))
  jm.EndInsertRows()
+ if (len(jm.Jobs()) == 1) {
+  qmlBridge.JobsLoaded(len(jm.Jobs()))
+ }
 }
 
 func (jm *JobModel) editJobShim(i int, c string, t string, j string, d string) {
@@ -179,6 +182,10 @@ func (jm *JobModel) editJobShim(i int, c string, t string, j string, d string) {
 }
 
 func (jm *JobModel) editJob(i int, c string, t string, j string, d string) {
+ if i < 0 || i >= len(jm.Jobs()) {
+  qmlBridge.ErrorLoadingJobs("Could not edit job: Index not found.")
+  return
+ }
  db, err := jobDb.Open()
  if err != nil {
   qmlBridge.ErrorLoadingJobs(err.Error())
@@ -210,6 +217,10 @@ func (jm *JobModel) removeJobShim(i int) {
 }
 
 func (jm *JobModel) removeJob(i int) {
+ if i < 0 || i >= len(jm.Jobs()) {
+  qmlBridge.ErrorLoadingJobs("Could not delete job: Index not found.")
+  return
+ }
  db, err := jobDb.Open()
  if err != nil {
   qmlBridge.ErrorLoadingJobs(err.Error())
