@@ -11,5 +11,6 @@ rcc_cgo_android_linux_arm.go
 rcc_cgo_linux_linux_amd64.go
 rcc.cpp
 rcc.qrc
+android/cgo_main_wrapper.go
 
 out

@@ -259,12 +259,10 @@ ApplicationWindow {
                           settings.customerPassword)
  }
 
- Shortcut {
-  sequence: StandardKey.Back
-  onActivated: {
-   if (backButton.visible) {
-    stack.pop()
-   }
+ onClosing: {
+  if (backButton.visible) {
+   stack.pop()
+   close.accepted = false
   }
  }
 }
