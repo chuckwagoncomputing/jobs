@@ -6,10 +6,13 @@ import (
  "github.com/therecipe/qt/gui"
  "github.com/therecipe/qt/qml"
  "github.com/therecipe/qt/quickcontrols2"
+ "sync"
 )
 
 type QmlBridge struct {
  core.QObject
+
+ _ func(errmsg string) `signal:"error"`
 
  _ func(jdType string, jdHost string, jdPort string, jdName string, jdUsername string, jdPassword string) `slot:"loadJobs"`
  _ func(count int) `signal:"jobsLoaded"`
@@ -17,7 +20,6 @@ type QmlBridge struct {
  _ func(c string, t string, j string, d string) `slot:"newJob"`
  _ func(i int, c string, t string, j string, d string) `slot:"editJob"`
  _ func(i int) `slot:"removeJob"`
- _ func(errmsg string) `signal:"errorSavingJob"`
 
  _ func(cUrl string, cUsername string, cPassword string) `slot:"loadCustomers"`
  _ func(count int) `signal:"customersLoaded"`
@@ -35,6 +37,8 @@ var yearModel = NewYearModel(nil)
 var customerModel = NewCustomerModel(nil)
 var jobModel = NewJobModel(nil)
 var labelModel = NewLabelModel(nil)
+
+var dbMutex sync.Mutex
 
 func main() {
  core.QCoreApplication_SetAttribute(core.Qt__AA_EnableHighDpiScaling, true)

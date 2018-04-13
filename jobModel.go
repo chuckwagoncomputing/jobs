@@ -117,6 +117,8 @@ func (jm *JobModel) loadJobsShim(jdType string, jdHost string, jdPort string, jd
 }
 
 func (jm *JobModel) loadJobs(jdType string, jdHost string, jdPort string, jdName string, jdUsername string, jdPassword string) {
+ dbMutex.Lock()
+ defer dbMutex.Unlock()
  jobDb = JobDB{jdType, jdHost, jdPort, jdName, jdUsername, jdPassword}
  db, err := jobDb.Open()
  if err != nil {
@@ -146,15 +148,17 @@ func (jm *JobModel) newJobShim(c string, t string, j string, d string) {
 }
 
 func (jm *JobModel) buildJob(c string, t string, j string, d string) {
+ dbMutex.Lock()
+ defer dbMutex.Unlock()
  db, err := jobDb.Open()
  if err != nil {
-  qmlBridge.ErrorLoadingJobs(err.Error())
+  qmlBridge.Error("Could not open DB to create job: " + err.Error())
   return
  }
  defer db.Close()
  tp, err := time.Parse("Jan 2 2006 15:04", t)
  if err != nil {
-  qmlBridge.ErrorSavingJob("Could not parse date")
+  qmlBridge.Error("Error Saving Job: Could not parse date")
   return
  }
  job := Job{JobCustomerID: c, DateTime: tp, Custom: j, Description: d}
@@ -162,7 +166,7 @@ func (jm *JobModel) buildJob(c string, t string, j string, d string) {
   qmlBridge.JobsLoaded(len(jm.Jobs()))
  }
  if err := db.Create(&job); err.Error != nil {
-  qmlBridge.ErrorSavingJob("Could not create job: " + err.Error.Error())
+  qmlBridge.Error("Error Saving job: " + err.Error.Error())
   return
  }
  jm.AddJob(&job)
@@ -182,13 +186,15 @@ func (jm *JobModel) editJobShim(i int, c string, t string, j string, d string) {
 }
 
 func (jm *JobModel) editJob(i int, c string, t string, j string, d string) {
+ dbMutex.Lock()
+ defer dbMutex.Unlock()
  if i < 0 || i >= len(jm.Jobs()) {
-  qmlBridge.ErrorLoadingJobs("Could not edit job: Index not found.")
+  qmlBridge.Error("Could not edit job: Index not found.")
   return
  }
  db, err := jobDb.Open()
  if err != nil {
-  qmlBridge.ErrorLoadingJobs(err.Error())
+  qmlBridge.Error("Could not open DB to edit job: " + err.Error())
   return
  }
  defer db.Close()
@@ -196,14 +202,14 @@ func (jm *JobModel) editJob(i int, c string, t string, j string, d string) {
  nr.JobCustomerID = c
  tp, err := time.Parse("Jan 2 2006 15:04", t)
  if err != nil {
-  qmlBridge.ErrorSavingJob("Could not parse date")
+  qmlBridge.Error("Error Saving job: Could not parse date")
   return
  }
  nr.DateTime = tp
  nr.Custom = j
  nr.Description = d
  if err := db.Save(nr); err.Error != nil {
-  qmlBridge.ErrorLoadingJobs("Could not save job: " + err.Error.Error())
+  qmlBridge.Error("Could not save job: " + err.Error.Error())
   return
  }
  nj := jm.Jobs()
@@ -217,18 +223,20 @@ func (jm *JobModel) removeJobShim(i int) {
 }
 
 func (jm *JobModel) removeJob(i int) {
+ dbMutex.Lock()
+ defer dbMutex.Unlock()
  if i < 0 || i >= len(jm.Jobs()) {
-  qmlBridge.ErrorLoadingJobs("Could not delete job: Index not found.")
+  qmlBridge.Error("Could not delete job: Index not found.")
   return
  }
  db, err := jobDb.Open()
  if err != nil {
-  qmlBridge.ErrorLoadingJobs(err.Error())
+  qmlBridge.Error("Could not open DB to delete job: " + err.Error())
   return
  }
  defer db.Close()
  if err := db.Delete(jm.Jobs()[i]); err.Error != nil {
-  qmlBridge.ErrorLoadingJobs("Could not delete job: " + err.Error.Error())
+  qmlBridge.Error("Could not delete job: " + err.Error.Error())
   return
  }
  jm.BeginRemoveRows(core.NewQModelIndex(), i, i)
