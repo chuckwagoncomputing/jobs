@@ -63,9 +63,8 @@ ApplicationWindow {
    }
   }
 
-  onErrorSavingJob: {
-   window.jobLabelMessage = "Error Saving Job: " + errmsg
-   window.jobLoaderSource = jobLabel
+  onError: {
+   errorTip.ToolTip.show(errmsg, 3000)
   }
  }
 
@@ -217,6 +216,15 @@ ApplicationWindow {
   id: stack
   anchors.fill: parent
   initialItem: "qrc:///qml/jobListPage.qml"
+ }
+
+ Rectangle {
+  id: errorTip
+  width: parent.width
+  anchors.top: parent.bottom
+  ToolTip {
+   width: parent.width
+  }
  }
 
  Item {
