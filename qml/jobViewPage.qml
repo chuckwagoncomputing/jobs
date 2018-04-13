@@ -49,10 +49,13 @@ Rectangle {
     width: parent.width
     font.pixelSize: 18
     Component.onCompleted: {
-     if (JSON.parse(currentJob.custom)[model.labelText].length > 0) {
-      text = model.labelText
-           + ": "
-           + JSON.parse(currentJob.custom)[model.labelText]
+     var jText = JSON.parse(currentJob.custom)[model.labelText]
+     if (typeof(jText) == "string") {
+      if (jText.length > 0) {
+       text = model.labelText
+            + ": "
+            + jText
+      }
      }
     }
    }
