@@ -13,7 +13,12 @@ Rectangle {
                       + yearPicker.currentItem.text + " "
                       + ("00" + hourPicker.currentItem.text).slice(-2) + ":"
                       + minutePicker.currentItem.text
-  stack.push("qrc:///qml/customPage.qml")
+  if (LabelModel.rowCount() > 0) {
+   stack.push("qrc:///qml/customPage.qml")
+  }
+  else {
+   stack.push("qrc:///qml/descPage.qml")
+  }
  }
 
  ListModel {
