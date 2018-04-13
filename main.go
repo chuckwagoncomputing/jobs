@@ -32,15 +32,20 @@ type QmlBridge struct {
  _ func() int `slot:"labelCount"`
 }
 
-var qmlBridge = NewQmlBridge(nil)
-var yearModel = NewYearModel(nil)
-var customerModel = NewCustomerModel(nil)
-var jobModel = NewJobModel(nil)
-var labelModel = NewLabelModel(nil)
+var qmlBridge *QmlBridge
+var yearModel *YearModel
+var customerModel *CustomerModel
+var jobModel *JobModel
+var labelModel *LabelModel
 
 var dbMutex sync.Mutex
 
 func main() {
+ qmlBridge = NewQmlBridge(nil)
+ yearModel = NewYearModel(nil)
+ customerModel = NewCustomerModel(nil)
+ jobModel = NewJobModel(nil)
+ labelModel = NewLabelModel(nil)
  core.QCoreApplication_SetAttribute(core.Qt__AA_EnableHighDpiScaling, true)
  gui.NewQGuiApplication(len(os.Args), os.Args)
  quickcontrols2.QQuickStyle_SetStyle("material")
