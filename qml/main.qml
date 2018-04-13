@@ -258,4 +258,13 @@ ApplicationWindow {
                           settings.customerUsername,
                           settings.customerPassword)
  }
+
+ Shortcut {
+  sequence: StandardKey.Back
+  onActivated: {
+   if (backButton.visible) {
+    stack.pop()
+   }
+  }
+ }
 }
