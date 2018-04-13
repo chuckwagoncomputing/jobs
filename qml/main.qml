@@ -260,7 +260,7 @@ ApplicationWindow {
  }
 
  onClosing: {
-  if (backButton.visible) {
+  if (Qt.platform.os == "android" && backButton.visible) {
    stack.pop()
    close.accepted = false
   }
