@@ -38,7 +38,7 @@ ApplicationWindow {
   onErrorLoadingJobs: {
    window.jobLabelMessage = "Error Loading Jobs: " + errmsg + "\nHave you set up your server?"
    window.jobLoaderSource = jobLabel
-   window.jobsLoaded = true
+   window.jobsLoaded = 0
   }
   onJobsLoaded: {
    if (count === 0) {
@@ -48,14 +48,14 @@ ApplicationWindow {
    else {
     window.jobLoaderSource = Qt.createComponent("qrc:///qml/jobList.qml")
    }
-   window.jobsLoaded = true
+   window.jobsLoaded = count
   }
 
   onErrorLoadingCustomers: {
    window.customersLoaded = 0
   }
   onCustomersLoaded: {
-   window.customersLoaded = n
+   window.customersLoaded = count
   }
 
   onError: {
@@ -203,22 +203,25 @@ ApplicationWindow {
     sourceComponent: {
      switch (index) {
       case 0:
-       if (window.jobsLoaded) {
+       if (window.jobsLoaded > 1) {
         return indicatorRect
        }
-       else {
+       else if (window.jobsLoaded === -1) {
         return indicatorLoading
+       }
+       else {
+        return indicatorNa
        }
        break;
       case 1:
        if (window.customersLoaded > 1) {
         return indicatorRect
        }
-       else if (window.customersLoaded === 0) {
-        return indicatorNa
-       }
        else if (window.customersLoaded === -1) {
         return indicatorLoading
+       }
+       else {
+        return indicatorNa
        }
        break;
       default:
@@ -229,7 +232,7 @@ ApplicationWindow {
   }
  }
 
- property bool jobsLoaded: false
+ property int jobsLoaded: -1
  property int customersLoaded: -1
 
  Component {
