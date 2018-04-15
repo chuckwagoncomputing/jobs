@@ -5,6 +5,9 @@ import QtQuick.Controls.Material 2.0
 
 Rectangle {
  id: dateTimePage
+ property bool indicatorEnabled: true
+ property int indicatorIndex: 2
+ property bool doublePop: CustomerModel.count() > 0 ? false : true
  property bool forwardEnabled: true
  signal forward()
  onForward: {

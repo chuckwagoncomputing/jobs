@@ -25,6 +25,8 @@ type CustomerModel struct {
 
  _ func(id string) int `slot:"findIndex"`
  _ func(id string) string `slot:"findName"`
+
+ _ func() int `slot:"count"`
 }
 
 func (cm *CustomerModel) init() {
@@ -38,6 +40,7 @@ func (cm *CustomerModel) init() {
  cm.ConnectAddCustomer(cm.addCustomer)
  cm.ConnectFindIndex(cm.find)
  cm.ConnectFindName(cm.findName)
+ cm.ConnectCount(cm.count)
 }
 
 func (cm *CustomerModel) roleNames() map[int]*core.QByteArray {
@@ -65,6 +68,10 @@ func (cm *CustomerModel) data(index *core.QModelIndex, role int) *core.QVariant 
 }
 
 func (cm *CustomerModel) rowCount(parent *core.QModelIndex) int {
+ return len(cm.Customers())
+}
+
+func (cm *CustomerModel) count() int {
  return len(cm.Customers())
 }
 
@@ -113,6 +120,7 @@ func (cm *CustomerModel) loadCustomers(cUrl string, cUsername string, cPassword 
   }
   go cm.parseCustomer(bytes.NewReader(data), i, f)
  }
+ qmlBridge.CustomersLoaded(len(files))
 }
 
 func (cm *CustomerModel) parseCustomer(data io.Reader, i int, f os.FileInfo) {
@@ -121,9 +129,6 @@ func (cm *CustomerModel) parseCustomer(data io.Reader, i int, f os.FileInfo) {
   qmlBridge.ErrorLoadingCustomers(err.Error())
  }
  cm.AddCustomer(&Customer{CustomerID: f.Name(), CustomerName: vcards[0].FormattedName})
- if i == 0 {
-  qmlBridge.CustomersLoaded(1)
- }
 }
 
 func (cm *CustomerModel) addCustomer(c *Customer) {

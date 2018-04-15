@@ -182,13 +182,13 @@ Rectangle {
                        settings.jobDbPassword)
     window.jobLabelMessage = "Loading Jobs..."
     window.jobLoaderSource = jobLabel
+    window.jobsLoaded = false
    }
    if (customerChanged) {
     QmlBridge.loadCustomers(settings.customerUrl,
                             settings.customerUsername,
                             settings.customerPassword)
-    window.customerLabelMessage = "Loading Customers..."
-    window.customerLoaderSource = customerLabel
+    window.customersLoaded = -1
    }
   }
  }

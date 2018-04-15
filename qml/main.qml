@@ -38,6 +38,7 @@ ApplicationWindow {
   onErrorLoadingJobs: {
    window.jobLabelMessage = "Error Loading Jobs: " + errmsg + "\nHave you set up your server?"
    window.jobLoaderSource = jobLabel
+   window.jobsLoaded = true
   }
   onJobsLoaded: {
    if (count === 0) {
@@ -47,20 +48,14 @@ ApplicationWindow {
    else {
     window.jobLoaderSource = Qt.createComponent("qrc:///qml/jobList.qml")
    }
+   window.jobsLoaded = true
   }
 
   onErrorLoadingCustomers: {
-   window.customerLabelMessage = "Error Loading Customers: " + errmsg + "\nHave you set up your server?"
-   window.customerLoaderSource = customerLabel
+   window.customersLoaded = 0
   }
   onCustomersLoaded: {
-   if (count === 0) {
-    window.customerLabelMessage = "No Customers Available."
-    window.customerLoaderSource = customerLabel
-   }
-   else {
-    window.customerLoaderSource = Qt.createComponent("qrc:///qml/customerList.qml")
-   }
+   window.customersLoaded = n
   }
 
   onError: {
@@ -69,9 +64,7 @@ ApplicationWindow {
  }
 
  property var jobLoaderSource: jobLabel
- property var customerLoaderSource: customerLabel
  property string jobLabelMessage: "Loading Jobs..."
- property string customerLabelMessage: "Loading Customers..."
 
  Component {
   id: jobLabel
@@ -80,23 +73,6 @@ ApplicationWindow {
    anchors.verticalCenter: parent.verticalCenter
    Label {
     text: window.jobLabelMessage
-    width: parent.width
-    horizontalAlignment: Text.AlignHCenter
-    wrapMode: Text.Wrap
-    anchors.horizontalCenter: parent.horizontalCenter
-    anchors.verticalCenter: parent.verticalCenter
-    font.pixelSize: 24
-   }
-  }
- }
-
- Component {
-  id: customerLabel
-  Rectangle {
-   anchors.horizontalCenter: parent.horizontalCenter
-   anchors.verticalCenter: parent.verticalCenter
-   Label {
-    text: window.customerLabelMessage
     width: parent.width
     horizontalAlignment: Text.AlignHCenter
     wrapMode: Text.Wrap
@@ -135,6 +111,9 @@ ApplicationWindow {
     source: "images/back.png"
    }
    onClicked: {
+    if (stack.currentItem.doublePop) {
+     stack.pop()
+    }
     stack.pop()
    }
   }
@@ -208,6 +187,95 @@ ApplicationWindow {
    }
    onClicked: {
     stack.currentItem.edit()
+   }
+  }
+  PageIndicator {
+   id: editIndicator
+   z: 1
+   spacing: 10
+   anchors.horizontalCenter: parent.horizontalCenter
+   anchors.top: titleLabel.bottom
+   currentIndex: stack.currentItem.indicatorIndex || false
+   visible: stack.currentItem.indicatorEnabled || false
+   count: 5
+   delegate: Loader {
+    property var thisIndex: index
+    sourceComponent: {
+     switch (index) {
+      case 0:
+       if (window.jobsLoaded) {
+        return indicatorRect
+       }
+       else {
+        return indicatorLoading
+       }
+       break;
+      case 1:
+       if (window.customersLoaded > 1) {
+        return indicatorRect
+       }
+       else if (window.customersLoaded === 0) {
+        return indicatorNa
+       }
+       else if (window.customersLoaded === -1) {
+        return indicatorLoading
+       }
+       break;
+      default:
+       return indicatorRect
+     }
+    }
+   }
+  }
+ }
+
+ property bool jobsLoaded: false
+ property int customersLoaded: -1
+
+ Component {
+  id: indicatorLoading
+  BusyIndicator {
+   height: 28
+   width: 28
+   y: -8
+   running: true
+   opacity: parent.thisIndex === stack.currentItem.indicatorIndex ? 1 : 0.45
+  }
+ }
+
+ Component {
+  id: indicatorRect
+  Rectangle {
+   height: 28
+   width: 28
+   y: -8
+   color: "transparent"
+   Rectangle {
+    anchors.verticalCenter: parent.verticalCenter
+    anchors.horizontalCenter: parent.horizontalCenter
+    implicitWidth: 15
+    implicitHeight: 15
+    radius: width
+    color: "#21be2b"
+    opacity: parent.parent.thisIndex === stack.currentItem.indicatorIndex ? 1 : 0.45
+   }
+  }
+ }
+
+ Component {
+  id: indicatorNa
+  Rectangle {
+   height: 28
+   width: 28
+   y: -8
+   color: "transparent"
+   Rectangle {
+    anchors.verticalCenter: parent.verticalCenter
+    anchors.horizontalCenter: parent.horizontalCenter
+    implicitWidth: 15
+    implicitHeight: 5
+    color: "#21be2b"
+    opacity: parent.parent.thisIndex === stack.currentItem.indicatorIndex ? 1 : 0.45
    }
   }
  }

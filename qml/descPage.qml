@@ -5,6 +5,8 @@ import QtQuick.Controls.Material 2.0
 
 Rectangle {
  id: descPage
+ property bool indicatorEnabled: true
+ property int indicatorIndex: 4
  property bool forwardEnabled: true
  signal forward()
  onForward: {

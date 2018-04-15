@@ -6,13 +6,20 @@ import QtQuick.Controls.Material 2.0
 Rectangle {
  id: jobListPage
  anchors.fill: parent
+ property bool indicatorEnabled: true
+ property int indicatorIndex: 0
  property bool backDisabled: true
  property bool addEnabled: true
  property bool settingsEnabled: true
  signal add()
  onAdd: {
   currentJob.reset()
-  stack.push("qrc:///qml/customerListPage.qml")
+  if (CustomerModel.count() > 0) {
+   stack.push("qrc:///qml/customerListPage.qml")
+  }
+  else {
+   stack.push(["qrc:///qml/customerListPage.qml", "qrc:///qml/dateTimePage.qml"])
+  }
  }
  Loader {
   id: jobLoader

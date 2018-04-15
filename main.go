@@ -22,7 +22,7 @@ type QmlBridge struct {
  _ func(i int) `slot:"removeJob"`
 
  _ func(cUrl string, cUsername string, cPassword string) `slot:"loadCustomers"`
- _ func(count int) `signal:"customersLoaded"`
+ _ func(n int) `signal:"customersLoaded"`
  _ func(errmsg string) `signal:"errorLoadingCustomers"`
 
  _ func(l []string) `slot:"loadLabels"`
