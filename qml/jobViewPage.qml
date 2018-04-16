@@ -15,6 +15,7 @@ Rectangle {
  ScrollView {
   anchors.top: parent.top
   anchors.bottom: deleteButton.top
+  width: parent.width
   Label {
    id: customerNameLabel
    width: parent.width
