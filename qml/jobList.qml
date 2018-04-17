@@ -35,6 +35,14 @@ ListView {
    stack.push("qrc:///qml/jobViewPage.qml")
   }
  }
+ header: Item {}
+ onContentHeightChanged: {
+  if (contentHeight < height) {
+   headerItem.height += (height - contentHeight)
+  }
+  currentIndex = count-1
+  positionViewAtEnd()
+ }
  Component.onCompleted: {
   jobList.positionViewAtEnd()
  }
