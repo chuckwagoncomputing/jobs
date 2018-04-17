@@ -11,6 +11,7 @@ Rectangle {
  property bool forwardEnabled: true
  signal forward()
  onForward: {
+  // Add label to the global array, then save the settings string from the array, then update the model
   if (labelEntryPage.fillText.length > 0) {
    window.customLabels[labelEntryPage.index] = labelText.text
    settings.customLabels = window.customLabels.join(",")

@@ -11,6 +11,9 @@ ApplicationWindow {
  minimumWidth: 400
  minimumHeight: 400
 
+ // Settings can't store arrays for some reason, so we have to store our custom labels as a string
+ // Don't get empty labels from the string. If we do, due to the fact that the stored string starts out empty,
+ //  we end up with an empty string as array element 0
  property var customLabels: settings.customLabels.split(",").filter(function(s){ return s != "" })
 
  Settings {
@@ -111,6 +114,7 @@ ApplicationWindow {
     source: "images/back.png"
    }
    onClicked: {
+    // If there are no customers, dateTimePage needs to pop twice, so it sets doublePop true
     if (stack.currentItem.doublePop) {
      stack.pop()
     }
@@ -189,6 +193,8 @@ ApplicationWindow {
     stack.currentItem.edit()
    }
   }
+
+  // This a new type of page indicator which I invented...
   PageIndicator {
    id: editIndicator
    z: 1
@@ -201,6 +207,7 @@ ApplicationWindow {
    delegate: Loader {
     property var thisIndex: index
     sourceComponent: {
+     // Each indicator dot has three states: Loading, Loaded, or N/A
      switch (index) {
       case 0:
        if (window.jobsLoaded > 1) {
@@ -224,6 +231,7 @@ ApplicationWindow {
         return indicatorNa
        }
        break;
+      // Only the first two pages actually have states other than Loaded
       default:
        return indicatorRect
      }
@@ -232,6 +240,9 @@ ApplicationWindow {
   }
  }
 
+ // -1: Loading
+ //  0: N/A
+ // >0: Loaded
  property int jobsLoaded: -1
  property int customersLoaded: -1
 
@@ -248,6 +259,7 @@ ApplicationWindow {
 
  Component {
   id: indicatorRect
+  // The rect-in-rect is to achieve the same sizing as the loading indicator
   Rectangle {
    height: 28
    width: 28
@@ -289,10 +301,12 @@ ApplicationWindow {
   initialItem: "qrc:///qml/jobListPage.qml"
  }
 
+ // There's a rectangle just off the screen...
  Rectangle {
   id: errorTip
   width: parent.width
   anchors.top: parent.bottom
+  // ...and it has a tool tip that may appear
   ToolTip {
    width: parent.width
   }
@@ -330,6 +344,7 @@ ApplicationWindow {
                           settings.customerPassword)
  }
 
+ // Handle the back button in Android
  onClosing: {
   if (Qt.platform.os == "android" && backButton.visible) {
    stack.pop()

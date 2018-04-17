@@ -49,8 +49,10 @@ Rectangle {
    delegate: Label {
     width: parent.width
     font.pixelSize: 18
+    // Set the text to the label with the value held by the label as a key
     Component.onCompleted: {
      var jText = JSON.parse(currentJob.custom)[model.labelText]
+     // It won't necessarily exist or have anything in it, so we need to check
      if (typeof(jText) == "string") {
       if (jText.length > 0) {
        text = model.labelText

@@ -5,12 +5,16 @@ import QtQuick.Controls.Material 2.0
 
 Rectangle {
  id: dateTimePage
+ // Let the page indicator be visible, and this is the third page
  property bool indicatorEnabled: true
  property int indicatorIndex: 2
+ // If there are no customers, we need to pop twice when going back.
+ // This is checked in main.qml, in the backButton onClicked
  property bool doublePop: CustomerModel.count() > 0 ? false : true
  property bool forwardEnabled: true
  signal forward()
  onForward: {
+  // Save the date
   currentJob.datetime = monthPicker.currentItem.text + " "
                       + dayPicker.currentItem.text + " "
                       + yearPicker.currentItem.text + " "
@@ -78,6 +82,7 @@ Rectangle {
 
  Tumbler {
   id: yearPicker
+  // These tumblers are rotated horizontally, which messes up the positioning, so we must position them manually.
   y: -180
   rotation: -90
   height: parent.width
@@ -92,9 +97,13 @@ Rectangle {
   }
   Component.onCompleted: {
    if (currentJob.datetime.length > 0) {
+    // If there's a current job, we'll subtract the difference between this year and the job year to get the index.
+    //  0    1    2    3    4
+    //  2018 2017 2016 2015 2014
+    //  2018     -     2015 = 3
     var dn = new Date
     var d = new Date(currentJob.datetime)
-    yearPicker.currentIndex = 10 - (dn.getYear() - d.getYear())
+    yearPicker.currentIndex = dn.getYear() - d.getYear()
    }
   }
  }
@@ -185,6 +194,7 @@ Rectangle {
   delegate: Text {
    rotation: 90
    anchors.right: parent.horizontalCenter
+   // This picker is in 5 minute intervals
    text: ("00" + (modelData * 5)).slice(-2)
    opacity: 0.4 + Math.max(0, 1 - Math.abs(Tumbler.displacement)) * 0.6
    font.pixelSize: 15 + Math.max(0, 1 - Math.abs(Tumbler.displacement)) * 3
@@ -197,6 +207,7 @@ Rectangle {
    else {
     d = new Date
    }
+   // This division is because of the 5 minute intervals
    minutePicker.currentIndex = d.getMinutes() / 5
   }
  }

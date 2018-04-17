@@ -135,6 +135,7 @@ Rectangle {
   }
  }
  StackView.onStatusChanged: {
+  // Check for changes and save them
   if (StackView.status === StackView.Deactivating) {
    var jobDbChanged, customerChanged = false
    if (settings.jobDbType != jobDbTypeField.currentText) {

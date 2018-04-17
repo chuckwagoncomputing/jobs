@@ -6,6 +6,7 @@ import QtQuick.Controls.Material 2.0
 ListView {
  id: jobList
  model: JobModel
+ // Set this list so the last added items are at top
  verticalLayoutDirection: ListView.BottomToTop
  delegate: ItemDelegate {
   anchors.left: parent.left
@@ -21,6 +22,7 @@ ListView {
    anchors.bottom: parent.bottom
    font.pixelSize: 14
    elide: Text.ElideRight
+   // Remove newlines
    text: description.replace(/(\r\n|\n|\r)/gm, " ")
   }
   onClicked: {
@@ -35,6 +37,7 @@ ListView {
    stack.push("qrc:///qml/jobViewPage.qml")
   }
  }
+ // This header is added to push the items to the top of the view if there aren't enough to fill the view.
  header: Item {}
  onContentHeightChanged: {
   if (contentHeight < height) {
