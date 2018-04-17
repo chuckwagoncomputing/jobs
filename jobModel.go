@@ -26,6 +26,8 @@ type JobModel struct {
 
  _ func(*Job) `slot:"addJob"`
  _ []*Job `property:"jobs"`
+
+ _ func() `slot:"reset"`
 }
 
 func (jm *JobModel) init() {
@@ -39,6 +41,7 @@ func (jm *JobModel) init() {
  jm.ConnectRowCount(jm.rowCount)
  jm.ConnectRoleNames(jm.roleNames)
  jm.ConnectAddJob(jm.addJob)
+ jm.ConnectReset(jm.reset)
 }
 
 func (jm *JobModel) roleNames() map[int]*core.QByteArray {
@@ -251,5 +254,11 @@ func (jm *JobModel) removeJob(i int) {
  }
  jm.BeginRemoveRows(core.NewQModelIndex(), i, i)
  jm.SetJobs(append(jm.Jobs()[:i], jm.Jobs()[i+1:]...))
+ jm.EndRemoveRows()
+}
+
+func (jm *JobModel) reset() {
+ jm.BeginRemoveRows(core.NewQModelIndex(), 0, len(jm.Jobs()) - 1)
+ jm.SetJobs([]*Job{})
  jm.EndRemoveRows()
 }

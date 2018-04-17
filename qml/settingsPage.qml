@@ -175,6 +175,7 @@ Rectangle {
     customerChanged = true
    }
    if (jobDbChanged) {
+    JobModel.reset()
     QmlBridge.loadJobs(settings.jobDbType,
                        settings.jobDbHost,
                        settings.jobDbPort,
@@ -186,6 +187,7 @@ Rectangle {
     window.jobsLoaded = false
    }
    if (customerChanged) {
+    CustomerModel.reset()
     QmlBridge.loadCustomers(settings.customerUrl,
                             settings.customerUsername,
                             settings.customerPassword)

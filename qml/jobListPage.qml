@@ -12,6 +12,7 @@ Rectangle {
  property bool backDisabled: true
  property bool addEnabled: true
  property bool settingsEnabled: true
+ property bool refreshEnabled: true
  signal add()
  onAdd: {
   // Reset the current job to empty values

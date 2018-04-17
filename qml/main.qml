@@ -196,6 +196,38 @@ ApplicationWindow {
    }
   }
 
+  ToolButton {
+   id: refreshButton
+   visible: stack.currentItem.refreshEnabled || false
+   anchors.left: settingsButton.right
+   anchors.verticalCenter: parent.verticalCenter
+   width: parent.height
+   height: parent.height
+   contentItem: Image {
+    fillMode: Image.PreserveAspectFit
+    horizontalAlignment: Image.AlignHCenter
+    verticalAlignment: Image.AlignVCenter
+    source: "images/refresh.png"
+   }
+   onClicked: {
+    JobModel.reset()
+    CustomerModel.reset()
+    window.jobLoaderSource = jobLabel
+    window.jobLabelMessage = "Loading Jobs..."
+    QmlBridge.loadJobs(settings.jobDbType,
+                       settings.jobDbHost,
+                       settings.jobDbPort,
+                       settings.jobDbName,
+                       settings.jobDbUsername,
+                       settings.jobDbPassword)
+    QmlBridge.loadCustomers(settings.customerUrl,
+                            settings.customerUsername,
+                            settings.customerPassword)
+    window.jobsLoaded = -1
+    window.customersLoaded = -1
+   }
+  }
+
   // This a new type of page indicator which I invented...
   PageIndicator {
    id: editIndicator
