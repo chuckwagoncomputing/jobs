@@ -21,7 +21,7 @@ ListView {
    anchors.bottom: parent.bottom
    font.pixelSize: 14
    elide: Text.ElideRight
-   text: description
+   text: description.replace(/(\r\n|\n|\r)/gm, " ")
   }
   onClicked: {
    if (jobList.currentIndex != index) {

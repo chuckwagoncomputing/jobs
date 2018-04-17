@@ -91,6 +91,8 @@ type JobDB struct {
  dbPassword string
 }
 
+// Opens the database and returns a database object.
+// Be sure to call db.Close() when you are done with it.
 func (jd *JobDB) Open() (*gorm.DB, error) {
  var db *gorm.DB
  var err error
@@ -117,8 +119,10 @@ func (jm *JobModel) loadJobsShim(jdType string, jdHost string, jdPort string, jd
 }
 
 func (jm *JobModel) loadJobs(jdType string, jdHost string, jdPort string, jdName string, jdUsername string, jdPassword string) {
+ // Lock the database. If it's already locked, wait for it to be unlocked.
  dbMutex.Lock()
  defer dbMutex.Unlock()
+ // Set the DB info, as this is the first time it's been used.
  jobDb = JobDB{jdType, jdHost, jdPort, jdName, jdUsername, jdPassword}
  db, err := jobDb.Open()
  if err != nil {
@@ -135,6 +139,7 @@ func (jm *JobModel) loadJobs(jdType string, jdHost string, jdPort string, jdName
   qmlBridge.ErrorLoadingJobs("Failed to load jobs from database.")
   return
  }
+ // Convert the array of Jobs into an array of *Jobs
  pJobs := make([]*Job, len(jobs))
  for i, _ := range jobs {
   pJobs[i] = &jobs[i]
@@ -148,6 +153,7 @@ func (jm *JobModel) newJobShim(c string, t string, j string, d string) {
 }
 
 func (jm *JobModel) buildJob(c string, t string, j string, d string) {
+ // Lock the database. If it's already locked, wait for it to be unlocked.
  dbMutex.Lock()
  defer dbMutex.Unlock()
  db, err := jobDb.Open()
@@ -186,8 +192,10 @@ func (jm *JobModel) editJobShim(i int, c string, t string, j string, d string) {
 }
 
 func (jm *JobModel) editJob(i int, c string, t string, j string, d string) {
+ // Lock the database. If it's already locked, wait for it to be unlocked.
  dbMutex.Lock()
  defer dbMutex.Unlock()
+ // Check for out-of-range index. This can occur if an item has been deleted but not yet removed from the list.
  if i < 0 || i >= len(jm.Jobs()) {
   qmlBridge.Error("Could not edit job: Index not found.")
   return
@@ -223,8 +231,10 @@ func (jm *JobModel) removeJobShim(i int) {
 }
 
 func (jm *JobModel) removeJob(i int) {
+ // Lock the database. If it's already locked, wait for it to be unlocked.
  dbMutex.Lock()
  defer dbMutex.Unlock()
+ // Check for out-of-range index. This can occur if an item has been deleted but not yet removed from the list.
  if i < 0 || i >= len(jm.Jobs()) {
   qmlBridge.Error("Could not delete job: Index not found.")
   return
