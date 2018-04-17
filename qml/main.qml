@@ -56,13 +56,15 @@ ApplicationWindow {
 
   onErrorLoadingCustomers: {
    window.customersLoaded = 0
+   QmlBridge.error("Error Loading Customers: " + errmsg)
   }
   onCustomersLoaded: {
    window.customersLoaded = count
   }
 
   onError: {
-   errorTip.ToolTip.show(errmsg, 3000)
+   errorToolTip.text = errmsg
+   errorToolTip.visible = true
   }
  }
 
@@ -301,14 +303,23 @@ ApplicationWindow {
   initialItem: "qrc:///qml/jobListPage.qml"
  }
 
- // There's a rectangle just off the screen...
  Rectangle {
-  id: errorTip
-  width: parent.width
-  anchors.top: parent.bottom
-  // ...and it has a tool tip that may appear
+  anchors.bottom: parent.bottom
+  anchors.margins: 10
+  anchors.left: parent.left
+  anchors.right: parent.right
+  z: 1
   ToolTip {
+   id: errorToolTip
    width: parent.width
+   timeout: 3000
+   contentItem: Text {
+    width: parent.width
+    text: errorToolTip.text
+    font: errorToolTip.font
+    color: "#ffffff"
+    wrapMode: Text.Wrap
+   }
   }
  }
 
