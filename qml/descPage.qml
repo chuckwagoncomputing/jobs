@@ -24,11 +24,14 @@ Rectangle {
   // Go back to the list
   stack.push("qrc:///qml/jobListPage.qml")
  }
- TextArea {
+ ScrollView {
   anchors.fill: parent
-  id: description
-  placeholderText: "Description"
-  wrapMode: Text.Wrap
+  TextArea {
+   anchors.fill: parent
+   id: description
+   placeholderText: "Description"
+   wrapMode: Text.Wrap
+  }
  }
  Component.onCompleted: {
   if (currentJob.description.length > 0) {
