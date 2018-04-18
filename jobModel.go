@@ -138,7 +138,7 @@ func (jm *JobModel) loadJobs(jdType string, jdHost string, jdPort string, jdName
   return
  }
  var jobs []Job
- if err := db.Find(&jobs).Error; err != nil {
+ if err := db.Order("id").Find(&jobs).Error; err != nil {
   qmlBridge.ErrorLoadingJobs("Failed to load jobs from database.")
   return
  }
