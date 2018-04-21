@@ -27,7 +27,6 @@ Rectangle {
  ScrollView {
   anchors.fill: parent
   TextArea {
-   anchors.fill: parent
    id: description
    placeholderText: "Description"
    wrapMode: Text.Wrap
