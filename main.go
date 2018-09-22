@@ -22,7 +22,7 @@ type QmlBridge struct {
  _ func(i int) `slot:"removeJob"`
 
  _ func(cUrl string, cUsername string, cPassword string) `slot:"loadCustomers"`
- _ func(count int) `signal:"customersLoaded"`
+ _ func(count int, done int) `signal:"customersLoaded"`
  _ func(errmsg string) `signal:"errorLoadingCustomers"`
 
  _ func(l []string) `slot:"loadLabels"`
@@ -30,6 +30,8 @@ type QmlBridge struct {
  _ func(i int, t string) `slot:"updateLabel"`
  _ func(i int) `slot:"removeLabel"`
  _ func() int `slot:"labelCount"`
+
+ _ func(t string) `slot:"copyText"`
 }
 
 var qmlBridge *QmlBridge
@@ -40,6 +42,8 @@ var labelModel *LabelModel
 
 // dbMutex is for controlling DB access.
 var dbMutex sync.Mutex
+
+var app *gui.QGuiApplication
 
 func main() {
  qmlBridge = NewQmlBridge(nil)
@@ -63,6 +67,7 @@ func main() {
  qmlBridge.ConnectUpdateLabel(labelModel.updateLabelShim)
  qmlBridge.ConnectRemoveLabel(labelModel.removeLabelShim)
  qmlBridge.ConnectLabelCount(labelModel.labelCount)
+ qmlBridge.ConnectCopyText(copyText)
 
  view.RootContext().SetContextProperty("QmlBridge", qmlBridge)
  view.RootContext().SetContextProperty("YearModel", yearModel)
@@ -72,4 +77,9 @@ func main() {
 
  view.Load(core.NewQUrl3("qrc:///qml/main.qml", 0))
  gui.QGuiApplication_Exec()
+}
+
+func copyText(t string) {
+ clipboard := app.Clipboard()
+ clipboard.SetText(t, gui.QClipboard__Clipboard)
 }

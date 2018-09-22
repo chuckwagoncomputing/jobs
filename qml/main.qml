@@ -55,11 +55,12 @@ ApplicationWindow {
   }
 
   onErrorLoadingCustomers: {
-   window.customersLoaded = 0
+   window.customersDoneLoading = 0
    QmlBridge.error("Error Loading Customers: " + errmsg)
   }
   onCustomersLoaded: {
    window.customersLoaded = count
+   window.customersDoneLoading = done
   }
 
   onError: {
@@ -225,6 +226,7 @@ ApplicationWindow {
                             settings.customerPassword)
     window.jobsLoaded = -1
     window.customersLoaded = -1
+    window.customersDoneLoading = -1
    }
   }
 
@@ -255,10 +257,10 @@ ApplicationWindow {
        }
        break;
       case 1:
-       if (window.customersLoaded > 1) {
+       if (window.customersDoneLoading >= 1) {
         return indicatorRect
        }
-       else if (window.customersLoaded === -1) {
+       else if (window.customersDoneLoading === -1) {
         return indicatorLoading
        }
        else {
@@ -279,6 +281,7 @@ ApplicationWindow {
  // >0: Loaded
  property int jobsLoaded: -1
  property int customersLoaded: -1
+ property int customersDoneLoading: -1
 
  Component {
   id: indicatorLoading

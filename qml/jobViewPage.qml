@@ -26,7 +26,7 @@ Rectangle {
     Label {
      id: customerNameLabel
      width: parent.width
-     text: CustomerModel.findName(currentJob.jobCustomerId)
+     text: window.customersLoaded, CustomerModel.getData(currentJob.jobCustomerId, 1)
      font.pixelSize: 26
      anchors.margins: 10
     }
@@ -69,6 +69,69 @@ Rectangle {
      }
     }
    }
+  }
+ }
+ Button {
+  id: copyButton
+  text: "Copy TSV"
+  width: parent.width
+  anchors.bottom: deleteButton.top
+  onClicked: {
+   var addrLine = CustomerModel.getData(currentJob.jobCustomerId, 3)
+   var addr = addrLine.split(";");
+   var address = "";
+   var city = "";
+   var state = "";
+   var zip = "";
+
+   if (addr.length > 1) {
+    if (addr[2].length > 0 && addr[3].length > 0) {
+     address = addr[2];
+    }
+
+    if (addr[3].length > 0) {
+     city = addr[3];
+    }
+
+    if (addr[4].length > 0) {
+     state = addr[4];
+    }
+
+    if (addr[5].length > 0) {
+     zip = addr[5];
+    }
+
+    if (address.length === 0 && city.length === 0) {
+     var cutAddr = addr[2].split(" ").reverse();
+     zip = cutAddr[0];
+     state = cutAddr[1];
+     city = cutAddr[2];
+     address = cutAddr.slice(3).reverse().join(" ");
+    }
+   }
+   var custom = JSON.parse(currentJob.custom)
+   var tsvText = "description\tdatetime\tcustomername\tcustomeraddress\tcustomercity\tcustomerstate\tcustomerzip"
+   for (var i = 0; i < Object.keys(custom).length; i++) {
+    tsvText += "\t" + Object.keys(custom)[i]
+   }
+   tsvText += "\n"
+            + currentJob.description
+            + '"\t'
+            + currentJob.datetime
+            + "\t"
+            + CustomerModel.getData(currentJob.jobCustomerId, 1)
+            + "\t"
+            + address
+            + "\t"
+            + city
+            + "\t"
+            + state
+            + "\t"
+            + zip
+   for (var i = 0; i < Object.keys(custom).length; i++) {
+    tsvText += '\t' + custom[Object.keys(custom)[i]]
+   }
+   QmlBridge.copyText(tsvText)
   }
  }
  Button {

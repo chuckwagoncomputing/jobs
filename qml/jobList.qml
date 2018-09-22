@@ -15,7 +15,7 @@ ListView {
    anchors.left: parent.left
    anchors.top: parent.top
    font.pixelSize: 20
-   text: datetime
+   text: window.customersLoaded, CustomerModel.getData(jobCustomerId, 1)
   }
   Text {
    anchors.left: parent.left

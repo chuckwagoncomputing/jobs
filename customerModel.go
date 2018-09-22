@@ -4,8 +4,8 @@ import (
  "io"
  "os"
  "github.com/therecipe/qt/core"
- dav "github.com/chuckwagoncomputing/gowebdav"
- "github.com/mapaiva/vcard-go"
+ dav "github.com/studio-b12/gowebdav"
+ "github.com/chuckwagoncomputing/vcard-go"
  "bytes"
  "strings"
 )
@@ -13,6 +13,7 @@ import (
 const (
  CustomerID = int(core.Qt__UserRole) + 1<<iota
  CustomerName
+ CustomerAddress
 )
 
 type CustomerModel struct {
@@ -25,6 +26,7 @@ type CustomerModel struct {
 
  _ func(id string) int `slot:"findIndex"`
  _ func(id string) string `slot:"findName"`
+ _ func(id string, role int) *core.QVariant `slot:"getData"`
 
  _ func() int `slot:"count"`
 
@@ -35,6 +37,7 @@ func (cm *CustomerModel) init() {
  cm.SetRoles(map[int]*core.QByteArray{
   CustomerID: core.NewQByteArray2("customerId", len("customerId")),
   CustomerName: core.NewQByteArray2("customerName", len("customerName")),
+  CustomerAddress: core.NewQByteArray2("customerAddress", len("customerAddress")),
  })
  cm.ConnectData(cm.data)
  cm.ConnectRowCount(cm.rowCount)
@@ -42,6 +45,7 @@ func (cm *CustomerModel) init() {
  cm.ConnectAddCustomer(cm.addCustomer)
  cm.ConnectFindIndex(cm.find)
  cm.ConnectFindName(cm.findName)
+ cm.ConnectGetData(cm.getData)
  cm.ConnectCount(cm.count)
  cm.ConnectReset(cm.reset)
 }
@@ -97,9 +101,29 @@ func (cm *CustomerModel) findName(id string) string {
  return cm.Customers()[i].CustomerName
 }
 
+// Get data by UID and role int. I haven't figured out yet how roles are assigned,
+//  so this is kind of magic-number stuff
+func (cm *CustomerModel) getData(id string, role int) *core.QVariant {
+ i := cm.find(id)
+ if i < 0 {
+  return core.NewQVariant14("Customer Not Loaded")
+ }
+ switch role + CustomerID {
+  case CustomerID:
+   return core.NewQVariant14(cm.Customers()[i].CustomerID)
+  case CustomerName:
+   return core.NewQVariant14(cm.Customers()[i].CustomerName)
+  case CustomerAddress:
+   return core.NewQVariant14(cm.Customers()[i].CustomerAddress)
+  default:
+   return core.NewQVariant()
+ }
+}
+
 type Customer struct {
  CustomerID string
  CustomerName string
+ CustomerAddress string
 }
 
 func (cm *CustomerModel) loadCustomersShim(cUrl string, cUsername string, cPassword string) {
@@ -124,8 +148,9 @@ func (cm *CustomerModel) loadCustomers(cUrl string, cUsername string, cPassword 
    return
   }
   go cm.parseCustomer(bytes.NewReader(data), i, f)
+  qmlBridge.CustomersLoaded(i, -1)
  }
- qmlBridge.CustomersLoaded(len(files))
+ qmlBridge.CustomersLoaded(len(files), 1)
 }
 
 func (cm *CustomerModel) parseCustomer(data io.Reader, i int, f os.FileInfo) {
@@ -133,7 +158,7 @@ func (cm *CustomerModel) parseCustomer(data io.Reader, i int, f os.FileInfo) {
  if err != nil {
   qmlBridge.ErrorLoadingCustomers(err.Error())
  }
- cm.AddCustomer(&Customer{CustomerID: f.Name(), CustomerName: vcards[0].FormattedName})
+ cm.AddCustomer(&Customer{CustomerID: f.Name(), CustomerName: vcards[0].FormattedName, CustomerAddress: vcards[0].Addr})
 }
 
 func (cm *CustomerModel) addCustomer(c *Customer) {
@@ -146,7 +171,7 @@ func (cm *CustomerModel) addCustomer(c *Customer) {
   }
  }
  cm.BeginInsertRows(core.NewQModelIndex(), begin, begin)
- s := append(cm.Customers(), &Customer{"",""})
+ s := append(cm.Customers(), &Customer{"","",""})
  copy(s[begin+1:], s[begin:])
  s[begin] = c
  cm.SetCustomers(s)
