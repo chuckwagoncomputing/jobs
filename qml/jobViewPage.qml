@@ -17,7 +17,7 @@ Rectangle {
   anchors.left: parent.left
   anchors.right: parent.right
   anchors.top: parent.top
-  anchors.bottom: deleteButton.top
+  anchors.bottom: copyButton.top
   ScrollView {
    height: scrollHolder.height
    width: scrollHolder.width
