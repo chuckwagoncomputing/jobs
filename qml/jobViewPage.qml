@@ -114,7 +114,7 @@ Rectangle {
    for (var i = 0; i < Object.keys(custom).length; i++) {
     tsvText += "\t" + Object.keys(custom)[i]
    }
-   tsvText += "\n"
+   tsvText += '\n"'
             + currentJob.description
             + '"\t'
             + currentJob.datetime
