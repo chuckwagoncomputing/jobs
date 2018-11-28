@@ -165,7 +165,8 @@ func (jm *JobModel) buildJob(c string, t string, j string, d string) {
 		return
 	}
 	defer db.Close()
-	tp, err := time.Parse("Jan 2 2006 15:04", t)
+ tz, _ := time.Now().Zone()
+	tp, err := time.Parse("Jan 2 2006 15:04 MST", t + " " + tz)
 	if err != nil {
 		qmlBridge.Error("Error Saving Job: Could not parse date")
 		return
@@ -211,7 +212,8 @@ func (jm *JobModel) editJob(i int, c string, t string, j string, d string) {
 	defer db.Close()
 	nr := jm.Jobs()[i]
 	nr.JobCustomerID = c
-	tp, err := time.Parse("Jan 2 2006 15:04", t)
+ tz, _ := time.Now().Zone()
+	tp, err := time.Parse("Jan 2 2006 15:04 MST", t + " " + tz)
 	if err != nil {
 		qmlBridge.Error("Error Saving job: Could not parse date")
 		return
