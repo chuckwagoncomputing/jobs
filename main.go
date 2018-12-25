@@ -35,7 +35,6 @@ type QmlBridge struct {
 }
 
 var qmlBridge *QmlBridge
-var yearModel *YearModel
 var customerModel *CustomerModel
 var jobModel *JobModel
 var labelModel *LabelModel
@@ -47,7 +46,6 @@ var app *gui.QGuiApplication
 
 func main() {
 	qmlBridge = NewQmlBridge(nil)
-	yearModel = NewYearModel(nil)
 	customerModel = NewCustomerModel(nil)
 	jobModel = NewJobModel(nil)
 	labelModel = NewLabelModel(nil)
@@ -70,7 +68,6 @@ func main() {
 	qmlBridge.ConnectCopyText(copyText)
 
 	view.RootContext().SetContextProperty("QmlBridge", qmlBridge)
-	view.RootContext().SetContextProperty("YearModel", yearModel)
 	view.RootContext().SetContextProperty("CustomerModel", customerModel)
 	view.RootContext().SetContextProperty("JobModel", jobModel)
 	view.RootContext().SetContextProperty("LabelModel", labelModel)

@@ -1,0 +1,3 @@
+[submodule "qml/qml-date-tumblers"]
+	path = qml/qml-date-tumblers
+	url = git@github.com:chuckwagoncomputing/qml-date-tumblers.git
