@@ -157,6 +157,7 @@ func (cm *CustomerModel) parseCustomer(data io.Reader, i int, f os.FileInfo) {
 	vcards, err := vcard.GetVCardsByReader(data)
 	if err != nil {
 		qmlBridge.ErrorLoadingCustomers(err.Error())
+		return
 	}
 	cm.AddCustomer(&Customer{CustomerID: f.Name(), CustomerName: vcards[0].FormattedName, CustomerAddress: vcards[0].Addr})
 }
