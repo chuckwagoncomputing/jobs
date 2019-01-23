@@ -20,7 +20,7 @@ Rectangle {
 																						+ dayPicker.day + " "
 																						+ yearPicker.year + " "
 																						+ ("00" + hourPicker.hour).slice(-2) + ":"
-																						+ minutePicker.minute
+																						+ ("00" + minutePicker.minute).slice(-2)
 		if (LabelModel.rowCount() > 0) {
 			stack.push("qrc:///qml/customPage.qml")
 		} else {
@@ -40,8 +40,8 @@ Rectangle {
 			stack.pop()
 		}
 		Component.onCompleted: {
-			if (currentJob.date) {
-				yearPicker.year = (new Date(currentJob.date)).getFullYear()
+			if (currentJob.datetime) {
+				yearPicker.year = (new Date(currentJob.datetime)).getFullYear()
 			} else {
 				yearPicker.year = (new Date).getFullYear()
 			}
@@ -58,8 +58,8 @@ Rectangle {
 			stack.pop()
 		}
 		Component.onCompleted: {
-			if (currentJob.date) {
-				monthPicker.month = (new Date(currentJob.date)).getMonth()
+			if (currentJob.datetime) {
+				monthPicker.month = (new Date(currentJob.datetime)).getMonth()
 			} else {
 				monthPicker.month = (new Date).getMonth()
 			}
@@ -77,8 +77,8 @@ Rectangle {
 			stack.pop()
 		}
 		Component.onCompleted: {
-			if (currentJob.date) {
-				dayPicker.day = (new Date(currentJob.date)).getDate()
+			if (currentJob.datetime) {
+				dayPicker.day = (new Date(currentJob.datetime)).getDate()
 			} else {
 				dayPicker.day = (new Date).getDate()
 			}
@@ -95,8 +95,8 @@ Rectangle {
 			stack.pop()
 		}
 		Component.onCompleted: {
-			if (currentJob.date) {
-				hourPicker.hour = (new Date(currentJob.date)).getHours()
+			if (currentJob.datetime) {
+				hourPicker.hour = (new Date(currentJob.datetime)).getHours()
 			} else {
 				hourPicker.hour = (new Date).getHours()
 			}
@@ -113,8 +113,8 @@ Rectangle {
 			stack.pop()
 		}
 		Component.onCompleted: {
-			if (currentJob.date) {
-				minutePicker.minute = (new Date(currentJob.date)).getMinutes()
+			if (currentJob.datetime) {
+				minutePicker.minute = (new Date(currentJob.datetime)).getMinutes()
 			} else {
 				minutePicker.minute = (new Date).getMinutes()
 			}
